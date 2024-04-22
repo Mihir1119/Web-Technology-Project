@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fireworks Simulator</title>
+    <style>
+        /* Set canvas to display as a block element to fill the screen */
+        canvas {
+            display:flow-root;
+        }
+        body {
+    background: #ffffff;
+    background-image: url(13.jpg);
+  }
+
+  #spinner {
+    display: block;
+    color: rgb(0, 0, 0);
+    width: 700px;
+    position: absolute;
+    left: 63%;
+    top: 60%;
+    transform: translate(-50%, -50%);
+  }
+  .a{
+    text-decoration: none;
+  }
+    </style>
+</head>
+<body>
+    <!-- Create a canvas element on which the fireworks will be drawn -->
+    <canvas id="fireworks">
+        <div style="margin-top: 70px;"></div>
+        <div class="mt-4 d-flex justify-content-center align-items-center">
+          <div class="card mb-4 mt-4" style="max-width: 540px;">
+            <div class="row g-0">          
+                <div class="card-body" style="background-image: url(12.jpg);">
+                  <h2 class="card-title" style="text-align: center; padding-left: 40px;">Result!</h2>
+                  <div style="padding-left: 30px;">
+                    <canvas id="spinner1" width="700" height="250"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="Button">
+        <button type="submit" class="btn" style="margin-left: 620px;margin-top: 0px;"><a
+                href="Home.html" style="text-decoration: none;"><h2 style="color: #000000;">Ok</h2></a></button>
+    </div>
+    
+    </canvas>
+    <script>
+        // Get the canvas element and its drawing context
+        const canvas = document.getElementById('fireworks');
+        const ctx = canvas.getContext('2d');
+        
+        // Set the canvas size to full screen
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Define the Particle class for the explosion particles
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                // Random initial velocity
+                this.velocity = {
+                    x: (Math.random() - 0.5) * 8,
+                    y: (Math.random() - 0.5) * 8
+                };
+                this.alpha = 1; // Opacity of the particle
+                this.friction = 0.99; // Friction to slow down particles
+            }
+
+            // Draw a particle on the canvas
+            draw() {
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+
+            // Update the particle position and opacity
+            update() {
+                this.velocity.x *= this.friction;
+                this.velocity.y *= this.friction;
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.alpha -= 0.01; // Fade out the particle
+            }
+        }
+
+        // Define the Firework class for the rockets
+        class Firework {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                // Initial upward velocity
+                this.velocity = {x: 0, y: Math.random() * -2.5 - 0.5};
+                this.particles = []; // Particles for explosion
+                this.lifespan = 180; // Time before explosion
+                this.hasExploded = false; // Track if the firework has exploded
+            }
+
+            // Draw the firework rocket on the canvas
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 3, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+
+            // Create particles for explosion
+            explode() {
+                for (let i = 0; i < 50; i++) {
+                    this.particles.push(new Particle(this.x, this.y, this.color));
+                }
+            }
+
+            // Update the firework position, check for explosion
+            update() {
+                this.lifespan--;
+
+                // Check if the firework should explode
+                if (this.lifespan <= 0 && !this.hasExploded) {
+                    this.explode();
+                    this.velocity = {x: 0, y: 0};
+                    this.hasExploded = true;
+                } else if (this.lifespan > 0) {
+                    this.y += this.velocity.y;
+                }
+
+                // Update and draw particles
+                for (let i = 0; i < this.particles.length; i++) {
+                    this.particles[i].update();
+                    this.particles[i].draw();
+                }
+            }
+        }
+
+        // Array to store the fireworks
+        let fireworks = [];
+
+        // Function to animate the fireworks
+        function animate() {
+            // Request the next animation frame
+            requestAnimationFrame(animate);
+
+            // Clear the canvas and create a trailing effect
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Update and draw each firework
+            fireworks.forEach((firework, index) => {
+                firework.update();
+                firework.draw();
+
+                // Remove fireworks that have finished exploding
+                if (firework.lifespan <= 0 && firework.particles.every(p => p.alpha <= 0)) {
+                    fireworks.splice(index, 1);
+                }
+            });
+
+            // Occasionally create a new firework
+            if (Math.random() < 0.015) { 
+                const x = Math.random() * canvas.width;
+                const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
+                fireworks.push(new Firework(x, canvas.height, color));
+            }
+        }
+
+        // Start the animation
+        animate();
+        window.onload = function() {
+
+      
+var total_res = localStorage.getItem("total");
+console.log(total_res);
+
+
+
+
+function spinner1() {
+
+
+  var spinner1 = document.getElementById("spinner1");
+  var ctx = spinner1.getContext("2d");
+  var width = spinner1.width;
+  var height = spinner1.height;
+  var degrees = 0;
+  var new_degrees = 0;
+  var difference = 0;
+  var color = "#05386b";
+  var bgcolor = "#b3f0ff ";
+  var text;
+  var animation_loop, redraw_loop;
+
+  function init() {
+    ctx.clearRect(0, 0, width, height);
+
+    ctx.beginPath();
+    ctx.strokeStyle = bgcolor;
+    ctx.lineWidth = 20;
+    ctx.arc(width / 2.9, height / 2.2, 70 , 0, Math.PI * 2, false);
+    ctx.stroke();
+    let radians = degrees * Math.PI / 180;
+
+    ctx.beginPath();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 20;
+    ctx.arc(width / 2.9, height / 2.2, 70, 0 - 90 * Math.PI / 180, radians - 90 * Math.PI / 180, false);
+    ctx.stroke();
+    ctx.fillStyle = color;
+    ctx.font = "25px arial";
+    text = (degrees / 360 * 100).toFixed(2) + "%";
+    text_width = ctx.measureText(text).width;
+    ctx.fillText(text, width / 3 - text_width / 3, height / 2 - 5);
+  }
+
+
+  function draw() {
+    if (typeof animation_loop != undefined) clearInterval(animation_loop);
+    new_degrees = (total_res * 360) / 100;
+    new_degrees = new_degrees.toFixed(0);
+    difference = new_degrees - degrees;
+    animation_loop = setInterval(animate_to, 1000 / difference);
+  }
+
+  function animate_to() {
+    if (degrees == new_degrees)
+      clearInterval(animation_loop);
+    else if (degrees < new_degrees)
+      degrees++;
+    else
+      degrees--;
+    init();
+  }
+
+  draw();
+}
+
+spinner1();
+}
+
+    </script>
+</body>
+</html>
